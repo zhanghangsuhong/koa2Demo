@@ -26,7 +26,7 @@ function set(key, val, timeout = 60 * 60) {
   redisClient.set(key, val)
   redisClient.expire(key, timeout)
 }
-
+// "lint": "eslint --ext .js ./src"
 /**
  * redis get
  * @param {string} key 
@@ -63,4 +63,4 @@ module.exports = {
 
 
 
- //get
+//get
