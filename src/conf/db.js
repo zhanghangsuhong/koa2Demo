@@ -14,7 +14,7 @@ let MYSQL_CONF = {
   host: '127.0.0.1',
   user: 'root',
   password: 'zhanghang',
-  database: 'test'
+  database: 'koa2'
 }
 
 if(isProd){

@@ -12,6 +12,7 @@ const redisStore = require('koa-redis')
 
 const errorViewRouter = require('./routes/view/error')
 const userViewRouter = require('./routes/view/user')
+const userAPIRouter = require('./routes/api/user')
 const index = require('./routes/index')
 
 // error handler
@@ -19,29 +20,29 @@ onerror(app)
 
 // middlewares
 app.use(bodyparser({
-  enableTypes:['json', 'form', 'text']
+    enableTypes:['json', 'form', 'text']
 }))
 app.use(json())
 app.use(logger())
 app.use(require('koa-static')(__dirname + '/public'))
 
 app.use(views(__dirname + '/views', {
-  extension: 'ejs'
+    extension: 'ejs'
 }))
 
 app.keys = ['UIsdf_7878#s']
 app.use(session({
-  key: 'weibo.sid',
-  prefix: 'weibo:sess:',
-  cookie: {
-    path: '/',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000
-  },
-  ttl: 24 * 60 * 60 * 1000,
-  store: redisStore({
-    all: '127.0.0.1:6379'
-  })
+    key: 'weibo.sid',
+    prefix: 'weibo:sess:',
+    cookie: {
+        path: '/',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000
+    },
+    ttl: 24 * 60 * 60 * 1000,
+    store: redisStore({
+        all: '127.0.0.1:6379'
+    })
 }))
 
 // logger
@@ -54,12 +55,13 @@ app.use(session({
 
 // routes
 app.use(index.routes(), index.allowedMethods())
+app.use(userAPIRouter.routes(), userAPIRouter.allowedMethods())
 app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
 app.use(errorViewRouter.routes(), errorViewRouter.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
-  console.error('server error', err, ctx)
+    console.error('server error', err, ctx)
 })
 
 module.exports = app
