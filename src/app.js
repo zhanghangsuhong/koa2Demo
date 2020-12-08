@@ -10,8 +10,9 @@ const logger = require('koa-logger')
 const session = require('koa-generic-session')
 const redisStore = require('koa-redis')
 
+const errorViewRouter = require('./routes/view/error')
+const userViewRouter = require('./routes/view/user')
 const index = require('./routes/index')
-const users = require('./routes/users')
 
 // error handler
 onerror(app)
@@ -53,7 +54,8 @@ app.use(session({
 
 // routes
 app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
+app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
+app.use(errorViewRouter.routes(), errorViewRouter.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {
