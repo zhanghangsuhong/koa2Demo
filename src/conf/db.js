@@ -11,27 +11,27 @@ let REDIS_CONF = {
 }
 
 let MYSQL_CONF = {
-  host: '127.0.0.1',
-  user: 'root',
-  password: 'zhanghang',
-  database: 'koa2'
-}
-
-if(isProd){
-  REDIS_CONF = {
-    port:6379,
-    host:'127.0.0.1'
-  }
-    
-  MYSQL_CONF = {
     host: '127.0.0.1',
     user: 'root',
     password: 'zhanghang',
-    database: 'test'
-  }
+    database: 'koa2'
+}
+
+if(isProd){
+    REDIS_CONF = {
+        port:6379,
+        host:'127.0.0.1'
+    }
+    
+    MYSQL_CONF = {
+        host: '127.0.0.1',
+        user: 'root',
+        password: 'zhanghang',
+        database: 'koa2'
+    }
 }
 
 module.exports = {
-  REDIS_CONF,
-  MYSQL_CONF
+    REDIS_CONF,
+    MYSQL_CONF
 }

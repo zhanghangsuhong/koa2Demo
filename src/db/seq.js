@@ -10,23 +10,23 @@ const { isProd } = require('../utils/env')
 const { host, database, user, password } = MYSQL_CONF
 
 const conf = {
-  host,
-  dialect: 'mysql',
-  //解决中文输入问题
-  define: {
-    charset: 'utf8',
-    dialectOptions: {
-      collate: 'utf8_general_ci'
+    host,
+    dialect: 'mysql',
+    //解决中文输入问题
+    define: {
+        charset: 'utf8',
+        dialectOptions: {
+            collate: 'utf8_general_ci'
+        }
     }
-  }
 }
 
 if (isProd) {
-  conf.pool = {
-    max: 5,
-    min: 0,
-    idle: 10000
-  }
+    conf.pool = {
+        max: 5,
+        min: 0,
+        idle: 10000
+    }
 }
 
 

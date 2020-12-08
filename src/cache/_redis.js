@@ -9,7 +9,7 @@ const { REDIS_CONF } = require('../conf/db')
 
 const redisClient = redis.createClient(REDIS_CONF.port, REDIS_CONF.host)
 redisClient.on('error', err => {
-  console.log('redis error')
+    console.log('redis error')
 })
 
 /**
@@ -19,12 +19,12 @@ redisClient.on('error', err => {
  * @param {number} timeout 过期时间
  */
 function set(key, val, timeout = 60 * 60) {
-  if (typeof val === 'object') {
-    val = JSON.stringify(val)
-  }
+    if (typeof val === 'object') {
+        val = JSON.stringify(val)
+    }
 
-  redisClient.set(key, val)
-  redisClient.expire(key, timeout)
+    redisClient.set(key, val)
+    redisClient.expire(key, timeout)
 }
 // "lint": "eslint --ext .js ./src"
 /**
@@ -32,33 +32,33 @@ function set(key, val, timeout = 60 * 60) {
  * @param {string} key 
  */
 function get(key) {
-  const promise = new Promise((resolve, reject) => {
-    redisClient.get(key, (err, val) => {
-      if (err) {
-        reject(err)
-        return
-      }
+    const promise = new Promise((resolve, reject) => {
+        redisClient.get(key, (err, val) => {
+            if (err) {
+                reject(err)
+                return
+            }
 
-      if (val == null) {
-        resolve(null)
-        return
-      }
+            if (val == null) {
+                resolve(null)
+                return
+            }
 
-      try {
-        resolve(JSON.parse(val))
-      } catch (ex) {
-        resolve(val)
-      }
+            try {
+                resolve(JSON.parse(val))
+            } catch (ex) {
+                resolve(val)
+            }
 
+        })
     })
-  })
-  return promise
+    return promise
 
 }
 
 module.exports = {
-  set,
-  get
+    set,
+    get
 }
 
 
