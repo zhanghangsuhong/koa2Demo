@@ -24,7 +24,7 @@ class BaseModel {
  * 成功的数据模型
  */
 class SuccessModel extends BaseModel{
-    constructor({ data = {} }) {
+    constructor(data = {} ) {
         super({
             errno: 0,
             data

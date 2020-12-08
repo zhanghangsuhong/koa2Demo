@@ -15,12 +15,14 @@ const userViewRouter = require('./routes/view/user')
 const userAPIRouter = require('./routes/api/user')
 const index = require('./routes/index')
 
+const { SESSION_SECRET_KEY } = require('./conf/secertKeys')
+
 // error handler
 onerror(app)
 
 // middlewares
 app.use(bodyparser({
-    enableTypes:['json', 'form', 'text']
+    enableTypes: ['json', 'form', 'text']
 }))
 app.use(json())
 app.use(logger())
@@ -30,7 +32,7 @@ app.use(views(__dirname + '/views', {
     extension: 'ejs'
 }))
 
-app.keys = ['UIsdf_7878#s']
+app.keys = [SESSION_SECRET_KEY]
 app.use(session({
     key: 'weibo.sid',
     prefix: 'weibo:sess:',
