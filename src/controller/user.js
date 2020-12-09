@@ -8,10 +8,10 @@ const { SuccessModel, ErrorModel } = require('../model/ResModel')
 const {
     registerUserNameNotExistInfo,
     registerUserNameExistInfo,
-    registerFailInfo
+    registerFailInfo,
+    loginFailInfo
 
 } = require('../model/ErrorInfo')
-const ErrorInfo = require('../model/ErrorInfo')
 const { doCrypTo } = require('../utils/cryp')
 
 
@@ -53,9 +53,27 @@ async function register({ userName, password, gender }) {
     }
 }
 
+/**
+ * 
+ * @param {Object} ctx 
+ * @param {string} userName 用户名
+ * @param {string} password 用户密码
+ */
+async function login(ctx, userName, password) {
+    const userInfo = await getUserInfo(userName,password)
+    if(!userInfo){
+        return new ErrorModel(loginFailInfo)
+    }
+    
+    if(ctx.session.userInfo == null){
+        ctx.session.userInfo = userInfo
+    }
+    return new SuccessModel()
+}
 
 
 module.exports = {
     isExist,
-    register
+    register,
+    login
 }

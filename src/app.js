@@ -22,7 +22,7 @@ onerror(app)
 
 // middlewares
 app.use(bodyparser({
-    enableTypes: ['json', 'form', 'text']
+    enableTypes: [ 'json', 'form', 'text' ]
 }))
 app.use(json())
 app.use(logger())
@@ -32,7 +32,7 @@ app.use(views(__dirname + '/views', {
     extension: 'ejs'
 }))
 
-app.keys = [SESSION_SECRET_KEY]
+app.keys = [ SESSION_SECRET_KEY ]
 app.use(session({
     key: 'weibo.sid',
     prefix: 'weibo:sess:',

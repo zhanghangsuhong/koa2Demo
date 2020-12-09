@@ -41,7 +41,7 @@ async function getUserInfo(userName, password) {
  * @param {number} gender 性别
  * @param {string} nickName 昵称
  */
-async function createUser({ userName, password, gender = 3, nickName}){
+async function createUser({ userName, password, gender = 3, nickName }){
     const createRes = await User.create({
         userName,
         password,
