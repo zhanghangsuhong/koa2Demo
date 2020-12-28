@@ -1,0 +1,362 @@
+.infowin3D{ width:300px; border:2px solid #CCC; position:absolute; background-color:#FFF;display:none;}
+.arrow{ position:absolute; width:40px; height:40px; bottom:-40px;}
+.arrow *{ display:block; border-width:20px; position:absolute; border-style:solid dashed dashed dashed; font-size:0; line-height:0; }
+.arrow em{border-color:#CCC transparent transparent;}
+.arrow span{border-color:#FFF transparent transparent; top:-3px;}
+.leaflet-popup {
+    position: absolute;
+    text-align: center;
+}
+.leaflet-popup-close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 4px 4px 0 0;
+    text-align: center;
+    width: 18px;
+    height: 14px;
+    font: 16px/14px Tahoma, Verdana, sans-serif;
+    color: #c3c3c3;
+    text-decoration: none;
+    font-weight: bold;
+    background: transparent;
+}
+.leaflet-popup-content-wrapper {
+    text-align: center;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+    padding: 1px;
+    text-align: left;
+    border-radius: 12px;
+}
+.leaflet-popup-content {
+    margin: 13px 19px;
+    line-height: 1.4;
+}
+.leaflet-popup-tip-container {
+    margin: 0 auto;
+    width: 40px;
+    height: 20px;
+    position: relative;
+    overflow: hidden;
+}
+.leaflet-popup-tip {
+    background: white;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+    width: 17px;
+    height: 17px;
+    padding: 1px;
+    margin: -10px auto 0;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+#cesiumContainer {
+    width: 100%;
+    height: 100%;
+}
+
+.cesium-viewer-vrContainer {
+    padding: 5px !important;
+}
+
+.cesium-baseLayerPicker-dropDown {
+    background-color: #48b !important;
+    border: 1px solid #ccc !important;
+}
+
+.cesium-viewer-fullscreenContainer {
+    padding: 5px !important;
+}
+
+.map3D-coordinates{
+    z-index: 888;
+    position: absolute;
+    bottom: 1px;
+    /*width: 250px;*/
+    height: auto;
+    overflow: hidden;
+    text-align: center;
+    left: 10px;
+    height: 29px;
+    line-height: 29px;
+    /* background: #303336; */
+    /* border: 1px solid #444; */
+}
+
+.syn_location3D{
+    /*width: 315px;*/
+    width: auto;
+    border: 1px solid #b0b0ae;
+    overflow: hidden;
+    padding: 15px 10px 10px 10px;
+    /*position: absolute;*/
+    /*top: 240px;*/
+    /* left: 440px; */
+    /*right: 60px;*/
+    /*z-index: 1006;*/
+    /*background: #0f161c;*/
+    font-family: "宋体";
+    font-size: 13px;
+}
+.syn_tit3D{height:24px;font-weight:normal;border-bottom:1px solid #cccccc;font-size:14px;}
+.syn_tit3D span{float:left;display:block;color:#fff;}
+.syn_tit3D img{float:right;display:block;margin-top:2px;cursor:pointer;}
+.closeButton3D{width:12px;height:12px;float:right;cursor:pointer;margin-top:4px;background:url(images/mainImage.png) no-repeat -31px -54px;}
+.syn_con3D{overflow:auto;margin-top:10px;padding-bottom:10px;}
+.pub_syn3D{float:left;display:inline;line-height:22px;}
+.pub_syn_rt3D{float:left;display:inline;}
+.pub_syn_rt3D a{color:#fff;margin-right:10px;display:inline-block;}
+.pub_syn_rt3D a:hover{text-decoration:underline;color:#5694dd;}
+
+.syn3D{
+    /*width: 315px;*/
+    width: auto;
+    /*border: 1px solid #b0b0ae;*/
+    overflow: hidden;
+    padding: 15px 10px 10px 10px;
+    /*position: absolute;
+    top: 245px;
+    right: 60px;
+    z-index: 1006;*/
+    background: #0f161c;
+    font-family: "宋体";
+    font-size: 13px;
+}
+
+.cesium_toolbar {
+    /*position: absolute;
+    top: 84px;
+    right: 52px;
+    bottom: 30px;
+    left: 0; */
+    display: inline;
+    margin: 10px;
+    /*padding: 0px;
+    background: #0f161c;
+    z-index: 999;*/
+    display: none;
+}
+
+#cesiumSlider {
+    position: absolute;
+    left: 50%;
+    display: none;
+    top: 0px;
+    background-color: #D3D3D3;
+    width: 5px;
+    height: 100%;
+    z-index: 9999;
+}
+#cesiumSlider:hover {
+    cursor: ew-resize;
+}
+/*覆盖全局样式css*/
+.main-content {
+    padding-bottom:0px;
+}
+.container-fluid {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+.footer-container-public {
+    padding: 13px 0;
+}
+
+.syn3D .ztree li a {
+    color: #fff;
+}
+
+.fly3DPaths{
+    position: absolute;
+    right: 80px;
+    top: 20px;
+    z-index: 888;
+    background: rgba(0,0,0,0.7);
+    /*height: 80%;*/
+    width: 400px;
+    padding-bottom: 15px;
+    display: none;
+}
+.fly3DPaths_title {
+    padding: 0 80px 0 20px;
+    height: 30px;
+    line-height: 30px;
+    border-bottom: 1px solid rgba(38,38,38,0.75);
+    font-size: 14px;
+    color: #fff;
+    overflow: hidden;
+    background-color: rgba(38,38,38,0.75);
+    border-radius: 2px 2px 0 0;
+}
+.fly3DPaths_content {
+    color: #fff;
+    /*height: 49px;*/
+    display: block;
+}
+.fly3DPaths_model_id {
+    height: 25px !important;
+    margin: 10px 4px 10px 15px;
+    text-align: center;
+    border-radius: 5px;
+    background: rgba(38,38,38,0.75);
+    color: #fff;
+    border: solid 1px #fff;
+    -webkit-box-shadow: 0 0 5px rgba(255,255,255,.51), 0 0 5px rgba(255,255,255,.51);
+    -moz-box-shadow: 0 0 5px rgba(255,255,255,.51),0 0 5px rgba(255,255,255,.51);
+    -o-box-shadow: 0 0 5px rgba(255,255,255,.51),0 0 5px rgba(255,255,255,.51);
+    box-shadow: 0 0 5px rgba(255,255,255,.51), 0 0 5px rgba(255,255,255,.51);
+    cursor: pointer;
+    width: 70px !important;
+    float: left;
+}
+
+.fly3DPaths_tab{
+    height:28px;
+    line-height:28px;
+    /*border-bottom: 1px solid #1BB0F5;*/
+    position:relative;
+}
+.fly3DPaths_tab li{
+    float:left;
+    display:inline;
+    width:103px;
+    cursor:pointer;
+    position:relative;
+}
+.fly3DPaths_tab li.select:after{
+    content: "";
+    display: block;
+    position: absolute;
+    width: 60%;
+    left: 22%;
+    border-bottom: 2px solid #ced948;
+    bottom: 0px;
+
+}
+.fly3DPaths_tab li span{
+    float:left;
+    display:block;
+}
+.fly3DPaths_tab a{
+    display:block;
+    float:left;
+    letter-spacing:1px;
+    font-size: 13px;
+    color: #fff;
+}
+.flss{
+    height:11px;
+    width:11px;
+    margin:7px 5px 0px 18px;
+    background:url(images/indexImage.png) no-repeat -5px -133px;
+}
+
+.ydph-talbe-head > table { margin-bottom:0px;table-layout:fixed;}
+.ydph-talbe-head > table > thead > tr { height:25px;}
+.ydph-talbe-head > table > tbody > tr { height:30px;}
+.ydph-talbe-head > table > thead > tr > th {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: none;
+    /* background-color: #f0f0f0; */
+    /* color: #323232; */
+    font-family: 黑体;
+    font-weight: normal;
+    color: #fff;
+}
+.ydph-talbe-head > table > tbody > tr > td { text-align:center;vertical-align:middle;}
+.ydph-talbe-head > table > thead > tr > th.colspan1{ width:30px;}
+.ydph-talbe-head > table > thead > tr > th.colspan2{ width:70px;}
+.ydph-talbe-head > table > thead > tr > th.colspan3{ width:185px;}
+.ydph-talbe-head > table > thead > tr > th.colspan4{ width:160px;}
+.ydph-talbe-head > table > tbody > tr > th{ border-bottom:none;}
+.ydph-talbe-head > table > thead > tr > th,
+.ydph-talbe-head > table > tbody > tr > th,
+.ydph-talbe-head > table > tfoot > tr > th,
+.ydph-talbe-head > table > thead > tr > td,
+.ydph-talbe-head > table > tbody > tr > td,
+.ydph-talbe-head > table > tfoot > tr > td {
+    padding: 1px;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+/*.ydph-talbe-head > table > tbody > tr:hover{background: rgba(0,0,0,0.7)}*/
+#overFly_table .btn-default:hover {
+    background-color: rgba(0,0,0,0.7) !important;
+}
+.cesium-viewer-fullscreenContainer {
+   z-index: 1000;
+   margin-bottom: 1px;
+   margin-right: 16px;
+}
+
+a{outline:none;text-decoration:none;}
+a:visited{text-decoration:none;}
+a:hover,a:active,a:focus{text-decoration:none;}
+a img{border:none;}
+a:focus{outline:none;}
+ul,li{list-style:none;}
+
+/*每条查询记录DIV的CSS_div*/
+.left_list_li_box {
+    float:left;
+    width: 300px;
+    /*height: auto;*/
+    display: block;
+    margin-bottom:6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.left_list_li_box:hover{
+    background-color:#01010126;
+}
+/*每条查询记录的排序图标CSS_div*/
+.list_poi_marker {
+    height: 25px;
+    width: 25px;
+}
+.left_list_li_box>p{margin:5px 0 0 65px;float:left;}
+/*每条查询记录的内容_div*/
+.left2_box2 {
+    float: left;
+    /*height: auto;*/
+    width: 300px;
+    margin: 5px 0 5px 5px;
+}
+/*每条查询记录的标题_div*/
+.left_list_li1 {
+    float:right;
+    /*height: auto;*/
+    line-height: 25px;
+    clear: both;
+}
+/*每条查询记录的标题_div_p*/
+.left_list_li1 p {
+    margin-right: 10px;
+    color: #035fbe;
+    font-size: 14px;
+    display: block;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: 260px;
+}
+/*每条查询记录的标题_div_p_a*/
+.left_list_li1 p a {
+   font-size:13px;
+}
+
+
+
+
+
+
+

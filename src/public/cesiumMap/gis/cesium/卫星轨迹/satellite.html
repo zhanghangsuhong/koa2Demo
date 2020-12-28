@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>卫星轨迹</title>
+    <link href="https://cesiumjs.org/releases/1.57/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <script src="https://cesiumjs.org/releases/1.57/Build/Cesium/Cesium.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+    <style>
+        html,
+        body,
+        #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000000;
+        }
+
+        .cesium-viewer-bottom {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content" style="display: none">
+        <div style="text-align: center; padding: 10px">
+            <!-- 图片展示区 -->
+            <img src="" style="width: 100%;">
+        </div>
+        <div id="text"
+            style="margin: 10px 0 20px;font-size: 14px;word-wrap: break-word;text-indent: 2em;line-height: 24px;">
+            <!-- 文字展示区 -->
+        </div>
+        <table class="cesium-infoBox-defaultTable">
+            <tbody>
+                <!-- 其他属性字段展示区 -->
+            </tbody>
+        </table>
+    </div>
+    <div id="cesiumContainer">
+    </div>
+    <script>
+        var viewer = new Cesium.Viewer('cesiumContainer', {
+            vrButton: false,
+            baseLayerPicker: false,
+            fullscreenButton: false,
+            geocoder: false,
+            homeButton: false,
+            navigationHelpButton: false,
+            skyAtmosphere: false,
+            imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+                url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer' // 可以配置arcgis离线影像服务
+            })
+        });
+
+        // 存储卫星数据
+        var routerInfo = [];
+
+        // 在读取文件前，需对文件内容做简单的处理
+
+        // {"Time (UTCG)":"6 Jul 2019 04:00:00.000","Lat(deg)":"-12.392","Lon(deg)":"-25.941","Alt(km)":"705.685689"}, // 处理前
+        // {"Time":"6 Jul 2019 04:00:00.000","Lat":"-12.392","Lon":"-25.941","Alt":"705.685689"}, // 处理后
+
+        // json文件 字段去掉（）内的内容，不要存在（）这种符号
+
+        fetch("./satelite1.json").then(function (response) {
+            response.json().then(function (data) {
+                routerInfo = data;
+                startAnimate();
+            })
+        });
+
+        function startAnimate() {
+            var start = parseTime(routerInfo[0].Time); // 卫星轨迹开始时间
+            var stop = parseTime(routerInfo[routerInfo.length - 1].Time); // 结束时间
+
+            viewer.clock.startTime = start.clone();
+            viewer.clock.stopTime = stop.clone();
+            viewer.clock.currentTime = start.clone();
+            viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+            viewer.clock.multiplier = 1;
+            viewer.timeline.zoomTo(start, stop);
+
+            // 计算卫星轨迹
+            function computeCircularTrack() {
+                var property = new Cesium.SampledPositionProperty();
+                for (var i = 0; i < routerInfo.length; i++) {
+                    var time = parseTime(routerInfo[i].Time);
+                    var position = Cesium.Cartesian3.fromDegrees(parseFloat(routerInfo[i].Lon), parseFloat(routerInfo[i]
+                        .Lat), parseFloat(routerInfo[i].Alt) * 1000);
+                    property.addSample(time, position);
+                }
+                return property;
+            }
+
+            var position = computeCircularTrack();
+
+            var entityFly = viewer.entities.add({
+                id: "VANGUARD_1_00005 LLA", // 卫星唯一编码
+                availability: new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({
+                    start: start,
+                    stop: stop
+                })]),
+                position: position,
+                orientation: new Cesium.VelocityOrientationProperty(position),
+                model: {
+                    uri: './zz.gltf', // 加载模型
+                    minimumPixelSize: 128 // 指定模型大小
+                },
+                path: {
+                    show: true, // 显示轨迹
+                    resolution: 1,
+                    material: Cesium.Color.PALETURQUOISE,
+                    width: 1
+                }
+            });
+
+            // 指定轨迹插值算法
+            entityFly.position.setInterpolationOptions({
+                interpolationDegree: 5,
+                interpolationAlgorithm: Cesium.LagrangePolynomialApproximation
+            });
+
+        }
+
+        // 鼠标选取
+        var entity = new Cesium.Entity();
+        viewer.screenSpaceEventHandler.setInputAction(function (clickEvent) {
+            var pickedObject = viewer.scene.pick(clickEvent.position);
+
+            // 如果选取到了目标
+            if (Cesium.defined(pickedObject) && Cesium.defined(pickedObject.id) && Cesium.defined(pickedObject.id.model)) {
+
+                // 得到卫星模型唯一标识
+                var no = pickedObject.id.id;
+
+                // 获取卫星相关显示信息
+                var showData = getShowContentByNo(no);
+
+                // 赋值
+                entity.name = "模型编号：" + showData.no;
+                $("#content").find("img").attr("src", showData.image);
+                $("#content #text").html(showData.brief);
+                $("#content tbody").empty();
+                $.map(showData.field, function (key, value) {
+                    $("#content tbody").append("<tr><th style='width: 30%'>" + value + "</th><td style='padding-left: 20px'>" + key + "</td></tr>");
+                });
+                entity.description = document.getElementById("content").innerHTML;
+                viewer.selectedEntity = entity;
+            } else {
+                viewer.selectedEntity = undefined;
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+        // 根据模型编号获取该模型的显示数据
+        function getShowContentByNo(no) {
+            return {
+                "no": no,
+                "image": "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1562559999143&di=bbc46b871246a8feaaa9e893b5c157f4&imgtype=0&src=http%3A%2F%2Fhimg2.huanqiu.com%2Fattachment2010%2F2015%2F0829%2F20150829100744871.jpg",
+                "brief":
+                    `<p>卫星是环绕一颗行星按闭合轨道做周期性运行的天体。不过，如果两个天体质量相当，它们所形成的系统一般称为双行星系统，而不是一颗行星和一颗天然卫星。通常，两个天体的质量中心都处于行星之内。因此，有天文学家认为冥王星与冥卫一应该归类为双行星，但2005年发现两颗新的冥卫，又使问题复杂起来。</p>
+                    <p>月球就是最明显的天然卫星的例子。在太阳系里，除水星和金星外，其他行星都有天然卫星。太阳系已知的天然卫星总数（包括构成行星环的较大的碎块）至少有160颗。天然卫星是指环绕行星运转的星球，而行星又环绕着恒星运转。就比如在太阳系中，太阳是恒星，我们地球及其它行星环绕太阳运转，月亮、土卫一、天卫一等星球则环绕着我们地球及其它行星运转，这些星球就叫做行星的天然卫星。土星的天然卫星第二多，已知62颗。木星的天然卫星最多，其中63颗已得到确认，至少有6颗尚待证实。天然卫星的大小不一，彼此差别很大。其中一些直径只有几千米大，例如，火星的两个小月亮，还有木星，土星，天王星外围的一些小卫星。还有几个却比水星还大，例如，土卫六、木卫三和木卫四，它们的直径都超过5200千米。</p>
+                    <p>太阳系内最大的卫星（超过3000公里）包括地球的卫星月球、木星的伽利略卫星木卫一（埃欧）、木卫二（欧罗巴）、木卫三（盖尼米德）、木卫四（卡利斯多）、土星的卫星土卫六（泰坦），以及海王星捕获的卫星海卫一（特里同）。更小的卫星参见各个相关行星条目。</p>`,
+                "field": { "test1": "data1", "test2": "data2", "test3": "data3", "test4": "data4", "test5": "data5" }
+            }
+        }
+
+        // 解析时间，返回JulianDate时间
+        function parseTime(d) {
+            d = d.split(" ");
+            var year = parseInt(d[2]);
+            var month = getMonth(d[1]);
+            var day = parseInt(d[0]);
+            var h = d[3].split(":");
+            var hour = parseInt(h[0]);
+            var min = parseInt(h[1]);
+            var sec = parseInt(h[2].split(".")[0]);
+            var date = new Date(year, month, day, hour, min, sec);
+            date = Cesium.JulianDate.fromDate(date);
+            date = Cesium.JulianDate.addHours(date, 8, new Cesium.JulianDate()); // JulianDate与Date相差8个小时
+            return date;
+        }
+
+        function getMonth(mon) {
+            switch (mon) {
+                case "Jan":
+                    return 1;
+                case "Feb":
+                    return 2;
+                case "Mar":
+                    return 3;
+                case "Apr":
+                    return 4;
+                case "May":
+                    return 5;
+                case "Jun":
+                    return 6;
+                case "Jul":
+                    return 7;
+                case "Aug":
+                    return 8;
+                case "Sept":
+                    return 9;
+                case "Oct":
+                    return 10;
+                case "Nov":
+                    return 11;
+                case "Dec":
+                    return 12;
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,657 @@
+@CHARSET "UTF-8";
+
+.map {height: 100%;width: 100%;}
+.ol-rotate{display:none;}
+.text-overflow-hidden{overflow: hidden;text-overflow: ellipsis;white-space: nowrap;} /*文本超出使用省略号*/
+
+/************************************全屏 ***********************************
+.fullscreen:-moz-full-screen {
+	height: 100%;
+}
+
+.fullscreen:-webkit-full-screen {
+	height: 100%;
+}
+
+.fullscreen:-ms-fullscreen {
+	height: 100%;
+}
+
+.fullscreen:fullscreen {
+	height: 100%;
+}
+
+.fullscreen {
+	width: 100%;
+	height: 700px;
+}*/
+
+/************************************量测工具样式 ************************************/
+.tooltip {
+	position: relative;
+	background: rgba(255, 255, 255, 1);
+	border-radius: 4px;
+	color: black;
+	padding: 4px 8px;
+	opacity: 0.7;
+	white-space: nowrap;
+	border: 1px solid red;
+}
+
+.tooltip-measure {
+	color: #ff6319;
+	font-weight: 700;
+}
+
+.tooltip-static {
+	background-color: #ffcc33;
+	color: black;
+	border: 1px solid white;
+}
+
+.tooltip-close {
+	background-color: #ffcc33;
+	color: red;
+	border: 1px solid red;
+	padding: 0px 2px;
+}
+
+.tooltip-close a {
+	cursor: pointer;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+/************************************鹰眼样式 ************************************/
+.ol-custom-overviewmap,.ol-custom-overviewmap.ol-uncollapsible {
+	left: auto;
+	top: auto;
+	bottom: 30px;
+	right: 10px;
+}
+
+.ol-custom-overviewmap:not(.ol-collapsed){
+	bottom: 10 px;
+	right: 10 px;
+}
+
+.ol-custom-overviewmap .ol-overviewmap-box {
+	border: 2px solid red;
+}
+
+.ol-custom-overviewmap:not(.ol-collapsed) button {
+	bottom: 1px;
+	left: auto;
+	right: 1px;
+	top: auto;
+}
+
+.ol-overviewmap:not(.ol-collapsed) button {
+	right: 2px;
+	left: auto;
+}
+
+/*比例尺样式*/
+.ol-custom-scaleline {
+	border-radius: 4px;
+	bottom: 2px;
+	left: 8px;
+	cursor:default;
+}
+
+.ol-control,.ol-custom-scaleline {
+	position: absolute;
+	padding: 2px;
+}
+
+.ol-custom-scaleline .ol-custom-scaleline-inner {
+	width: 112px !important;
+	border: 1px solid #ddd;
+	border-top: none;
+	color: #ddd;
+	font-size: 13px;
+	text-align: center;
+	margin: 1px;
+	will-change: contents, width;
+}
+
+/************************************鼠标位置坐标显示样式************************************/
+.ol-custom-mouseposition {
+	position: absolute;
+	padding: 2px;
+	bottom: 2px;
+	left: 138px;
+	font-size:13px;
+	color: #ddd;
+	cursor:default;
+}
+
+/************************************图层控制样式************************************/
+.ol-layer-switcher {
+	position: absolute;
+	top: 3.5em;
+	left: 7.5em;
+}
+
+.ol-layer-switcher button {
+	float: left;
+	width: 38px;
+	height: 38px;
+	background-image:
+		url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAACE1BMVEX///8A//8AgICA//8AVVVAQID///8rVVVJtttgv98nTmJ2xNgkW1ttyNsmWWZmzNZYxM4gWGgeU2JmzNNr0N1Rwc0eU2VXxdEhV2JqytQeVmMhVmNoydUfVGUgVGQfVGQfVmVqy9hqy9dWw9AfVWRpydVry9YhVmMgVGNUw9BrytchVWRexdGw294gVWQgVmUhVWPd4N6HoaZsy9cfVmQgVGRrytZsy9cgVWQgVWMgVWRsy9YfVWNsy9YgVWVty9YgVWVry9UgVWRsy9Zsy9UfVWRsy9YgVWVty9YgVWRty9Vsy9aM09sgVWRTws/AzM0gVWRtzNYgVWRuy9Zsy9cgVWRGcHxty9bb5ORbxdEgVWRty9bn6OZTws9mydRfxtLX3Nva5eRix9NFcXxOd4JPeINQeIMiVmVUws9Vws9Vw9BXw9BYxNBaxNBbxNBcxdJexdElWWgmWmhjyNRlx9IqXGtoipNpytVqytVryNNrytZsjZUuX210k5t1y9R2zNR3y9V4lp57zth9zdaAnKOGoaeK0NiNpquV09mesrag1tuitbmj1tuj19uktrqr2d2svcCu2d2xwMO63N+7x8nA3uDC3uDFz9DK4eHL4eLN4eIyYnDX5OM5Z3Tb397e4uDf4uHf5uXi5ePi5+Xj5+Xk5+Xm5+Xm6OY6aHXQ19fT4+NfhI1Ww89gx9Nhx9Nsy9ZWw9Dpj2abAAAAWnRSTlMAAQICAwQEBgcIDQ0ODhQZGiAiIyYpKywvNTs+QklPUlNUWWJjaGt0dnd+hIWFh4mNjZCSm6CpsbW2t7nDzNDT1dje5efr7PHy9PT29/j4+Pn5+vr8/f39/f6DPtKwAAABTklEQVR4Xr3QVWPbMBSAUTVFZmZmhhSXMjNvkhwqMzMzMzPDeD+xASvObKePPa+ffHVl8PlsnE0+qPpBuQjVJjno6pZpSKXYl7/bZyFaQxhf98hHDKEppwdWIW1frFnrxSOWHFfWesSEWC6R/P4zOFrix3TzDFLlXRTR8c0fEEJ1/itpo7SVO9Jdr1DVxZ0USyjZsEY5vZfiiAC0UoTGOrm9PZLuRl8X+Dq1HQtoFbJZbv61i+Poblh/97TC7n0neCcK0ETNUrz1/xPHf+DNAW9Ac6t8O8WH3Vp98f5lCaYKAOFZMLyHL4Y0fe319idMNgMMp+zWVSybUed/+/h7I4wRAG1W6XDy4XmjR9HnzvDRZXUAYDFOhC1S/Hh+fIXxen+eO+AKqbs+wAo30zDTDvDxKoJN88sjUzDFAvBzEUGFsnADoIvAJzoh2BZ8sner+Ke/vwECuQAAAABJRU5ErkJggg==')
+		/*logo.png*/;
+	background-repeat: no-repeat;
+	background-position: 2px;
+	background-color: transparent;
+	border: none;
+	display: block;
+}
+
+.ol-layer-switcher.shown ul {
+	display: block;
+}
+
+.ol-layer-switcher ul {
+	display: none;
+}
+
+.ol-layer-switcher.shown button {
+	display: none;
+}
+
+.ol-layer-switcher.shown >.ztree{
+	background-color: #fff;
+	border: 1px solid #617775;
+	width:220px;
+	max-height:360px;
+	overflow-y:auto;
+	overflow-x:auto;
+}
+
+.ol-layer-switcher-nobutton.shown >.ztree{
+	background-color: #fff;
+	width:220px;
+	max-height:360px;
+	overflow-y:auto;
+	overflow-x:auto;
+}
+
+/************************************Popup样式***********************************
+.ol-popup {
+	position: absolute;
+	background-color: white;
+	-webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2) );
+	filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2) );
+	padding: 0px 5px 0px 0px;
+	border-radius: 10px;
+	border: 1px solid #cccccc;
+	bottom: 12px;
+	left: -50px;
+	min-width: 280px;
+}
+
+.ol-popup:after,.ol-popup:before {
+	top: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.ol-popup:after {
+	border-top-color: white;
+	border-width: 10px;
+	left: 48px;
+	margin-left: -10px;
+}
+
+.ol-popup:before {
+	border-top-color: #cccccc;
+	border-width: 11px;
+	left: 48px;
+	margin-left: -11px;
+}
+
+.ol-popup-closer {
+	text-decoration: none;
+	position: absolute;
+	top: 2px;
+	right: 7px;
+	font-size: 120%;
+	color: gray;
+}
+
+.ol-popup-closer:after {
+	content: "\2716";
+}
+
+.ol-popup-content {
+	min-width: 170px;
+	max-height: 200px; 
+	overflow-x: auto;
+	padding: 10px;
+}
+.popover{max-width:none;}
+.popover-content {min-width: 180px;}*/
+
+/************************************标绘PlotToolBar样式************************************/
+.plot ul{ margin:0; padding:0;}
+.plot ul,li{ list-style:none;}
+.plot a{ text-decoration:none;}
+.plot {
+	cursor: auto;
+}
+
+.menuCenter {
+	position: absolute;
+	top: 50%;
+	left: 50px;
+	background-color: rgba(240, 240, 240, 0.75);
+	border: 1px solid #b7b7b7;
+	border-left: none;
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
+	box-shadow: 0 0 5px #ccc;
+	-moz-box-shadow: 0 0 5px #ccc;
+	-webkit-box-shadow: 0 0 5px #ccc;
+}
+
+.plot .menuCenter>li {
+	padding-bottom: 1px;
+	border-bottom: 1px solid #b7b7b7;
+	position: relative;
+}
+
+.plot .menuCenter>li:hover {
+	border: 1px solid #868686;
+}
+
+.plot .menuCenter li:hover .strk,.plot .menuCenter li:active .strk {
+	display: block;
+}
+
+.hid {
+	position: absolute;
+	top: 0px;
+	left: 25px;
+}
+
+.strk {
+	display: none;
+	width: 120px;
+	background-color: rgba(240, 240, 240, 1);
+	border: 1px solid #b7b7b7;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	box-shadow: 0 0 5px #ccc;
+	-moz-box-shadow: 0 0 5px #ccc;
+	-webkit-box-shadow: 0 0 5px #ccc;
+	margin-left: 10px !important;
+	z-index: 95;
+	float: left;
+}
+
+.strk li {
+	text-align: center;
+	padding: 8px 0px;
+	border-bottom: 1px solid #ccc;
+}
+
+.strk li:hover {
+	background: #014e82;
+}
+.strk li:hover a{color:#fff;cursor:hand;}
+
+.strk li a {
+	color: #555;
+}
+
+.tlttle {
+	display: block;
+	color: #555;
+	font-size: 14px;
+	background-color: #b2b2b2;
+	font-weight: bold;
+}
+.tlttle:hover{background-color: #b2b2b2 !important; color:#555;}
+
+/************************************地图底部背景条样式************************************/
+.mapfootBottom{ width:100%; height:30px; background:rgba(0,0,0,0.5); position:absolute; bottom:0px; cursor:default;}
+
+/************************************工具箱Toolbox样式************************************/
+.tool_next{ position: absolute;top: 15px;left: 20px;}
+.tool_next_3d{ position: absolute;top: 35px;left: 20px;}
+.navMenu {width: 55px; color: #333; text-align: center; height: 35px; line-height: 35px; font-size: 13px; cursor: default; box-shadow: inset 0 1px 1px rgba(255, 255, 255, .5), inset 0 -1px 0 rgba(0, 0, 0, .15), 0 1px 3px rgba(0, 0, 0, .15); background-color: #e1e1e1;}
+.navMenu ul{ margin:0; padding:0;}
+.toolCenter>li{ width:55px; border-bottom:1px solid #dddddd;}
+.borderNo{ border-bottom:none !important;}
+
+/*toolgroup*/
+.toolgroup{width:55px; height:36px;margin:0 auto;}
+.common{background: url(../images/bmap/toolbox/inc_zx_01.jpg);}
+.common_hover{background: url(../images/bmap/toolbox/inc_zxHover_01.jpg);}
+.switchertool{background: url(../images/bmap/toolbox/switch.jpg);}
+.switchertool_hover{background: url(../images/bmap/toolbox/switch_hover.jpg);}
+.plotdraw{background: url(../images/bmap/toolbox/inc_zx_02.jpg);}
+.plotdraw_hover{background: url(../images/bmap/toolbox/inc_zxHover_02.jpg);}
+.labeldraw{background: url(../images/bmap/toolbox/inc_zx_03.jpg);}
+.labeldraw_hover{background: url(../images/bmap/toolbox/inc_zxHover_03.jpg);}
+.imageplot{background: url(../images/bmap/toolbox/inc_zx_04.jpg);}
+.imageplot_hover{background: url(../images/bmap/toolbox/inc_zxHover_04.jpg);}
+
+/*toolbar*/
+.commonToolBar{ width:298px; height:32px; position:absolute; left:55px; top:73px;display:none;}
+.commonToolBar li{ float:left;  border-left:1px solid #ddd;}
+.switcherToolBar{ width:100px; height:32px; position:absolute; left:55px; top:37px;display:none;}
+.switcherToolBar li{ float:left;  border-left:1px solid #ddd;}
+.toolgroupbar{width:32px; height:32px;}
+.swipec{background: url(../images/bmap/toolbox/swipe.jpg);}
+.swipec_hover{background: url(../images/bmap/toolbox/swipe_hover.jpg);}
+.reposition{background: url(../images/bmap/toolbox/reposition.jpg);}
+.reposition_hover{background: url(../images/bmap/toolbox/reposition_hover.jpg);}
+.drag{ background: url(../images/bmap/toolbox/icons_02.jpg); }
+.drag_hover{ background: url(../images/bmap/toolbox/iconsHover_02.jpg); }
+.lager{background: url(../images/bmap/toolbox/icons_03.jpg);}
+.lager_hover{background: url(../images/bmap/toolbox/iconsHover_03.jpg);}
+.smaller{background: url(../images/bmap/toolbox/icons_04.jpg);}
+.smaller_hover{background: url(../images/bmap/toolbox/iconsHover_04.jpg);}
+.mapBar{background: url(../images/bmap/toolbox/icons_05.jpg);}
+.mapBar_hover{background: url(../images/bmap/toolbox/iconsHover_05.jpg);}
+.layertool{background: url(../images/bmap/toolbox/icons_06.jpg);}
+.layertool_hover{background: url(../images/bmap/toolbox/iconsHover_06.jpg);}
+.wfslayereditor{background: url(../images/bmap/toolbox/wfslayereditor.jpg);}
+.wfslayereditor_hover{background: url(../images/bmap/toolbox/wfslayereditor_hover.jpg);}
+.suolue{background: url(../images/bmap/toolbox/icons_07.jpg);}
+.suolue_hover{background: url(../images/bmap/toolbox/iconsHover_07.jpg);}
+.cej_icon{background: url(../images/bmap/toolbox/cej.jpg);}
+.cej_icon_hover{background: url(../images/bmap/toolbox/cej_hover.jpg);}
+.cem_icon{background: url(../images/bmap/toolbox/cem.jpg);}
+.cem_icon_hover{background: url(../images/bmap/toolbox/cem_hover.jpg);}
+.remove{background: url(../images/bmap/toolbox/icons_09.jpg);}
+.remove_hover{background: url(../images/bmap/toolbox/iconsHover_09.jpg);}
+.vmap{background: url(../images/bmap/toolbox/vmap.jpg);}
+.vmap_hover{background: url(../images/bmap/toolbox/vmap_hover.jpg);}
+.imagemap{background: url(../images/bmap/toolbox/imagemap.jpg);}
+.imagemap_hover{background: url(../images/bmap/toolbox/imagemap_hover.jpg);}
+.d2dmap{background: url(../images/bmap/toolbox/d2dmap.jpg);}
+.d2dmap_hover{background: url(../images/bmap/toolbox/d2dmap_hover.jpg);}
+.d3dmap{background: url(../images/bmap/toolbox/d3dmap.jpg);}
+.d3dmap_hover{background: url(../images/bmap/toolbox/d3dmap_hover.jpg);}
+
+/************************************弹框Window样式************************************/
+.popfixwindow{ width:300px; background:#fff; position:absolute; display:none; padding: 15px;margin-bottom: 20px;border-radius: 4px;cursor:default;}
+.closewindow{ position:absolute; right:15px; top:10px; }
+
+
+/*标绘线、面、箭头*/
+.shapepage{ width:256px; height:200px; padding:15px 12px 10px 18px; background:#fff; border:1px solid #ddd; position:relative; display:none; border-radius:4px;}
+.close_shapepage{ position:absolute; right:8px; top:3px; }
+.plot_freehandline {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+    margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/plot_freehandline.png);
+}
+.plot_line {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+    margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/plot_line.png);
+}
+.emergency_freehand {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+    margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/emergency_freehand.png);
+}
+.emergency_polygon {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+    margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/emergency_polygon.png);
+}
+.emergency_rect {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+     margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/emergency_rect.png);
+}
+.emergency_circle {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+    margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/emergency_circle.png);
+}
+.emergency_straight_arrow {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+    margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/plot_rectA.png);
+}
+.emergency_simple_arrow {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+     margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/plot_simpleA.png);
+}
+.emergency_tailed_arrow {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+     margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/plot_tailedA.png);
+}
+.emergency_assembly {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+    margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/plot_assembly.png);
+}
+.emergency_hx {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+    margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/hx.png);
+}
+.emergency_qx {
+    cursor: pointer;
+    width: 46px;
+    height: 45px;
+    float: left;
+    margin:10px 10px 0px 0px;
+    background: url(../images/bmap/plot/draw/qx.png);
+}
+/*标绘图片标注样式*/
+.imgList{width:255px;margin-top:10px;}
+.fenlei {display: block; height: 34px; padding: 6px 12px; font-size: 14px; color: #555; border: 1px solid #ccc; border-radius: 4px; outline: none;}
+.contish{overflow-y:auto;border:1px solid #ddd;}
+.contish ul{ margin:0; padding:0;}
+.contish ul li{ float:left; margin:5px 5px;cursor:pointer;}
+/**图片标绘编辑工具*/
+.imgplottls{position: absolute;top: 18px;margin-left: 80px;}
+.imgplottls li{float:left;padding: 4px 1px 4px 1px;cursor: pointer;width:55px;}
+.imgplottls li:hover{border: 1px solid #e5e5e5;background: #e8eff6;border-bottom: none;}
+.imgplottls li a{color:#000000;}
+.imgplottls li a：hover{color:#2774c9;}
+.tlselectlabel{width: 14px;height: 14px;float: left;margin-right: 3px;margin-top: 3px; background: url(../images/map/index/indexImage.png) no-repeat -41px -133px;}
+.tlclearlabel{width: 14px;height: 14px;float: left;margin-right: 3px;margin-top: 2px;background: url(../images/map/index/indexImage.png) no-repeat -111px -133px;}
+
+/************************************文本标绘样式************************************/
+.bjContent textarea{resize: none;margin: 0;padding: 0;border: 0;overflow: visible;width: 100%;word-wrap: break-word;outline:none;}
+.bj_remark{display: block;position: absolute;top: 0;left: 2px;}
+.bj_remark i{width: 19px;height: 20px;margin: 0px -1px;border:1px solid #999999;position:relative;}
+.bj_remark .btn_vg{ vertical-align:middle; line-height:17px; text-align:center; color:#67c35c; float:left; cursor:pointer;background-color: #fff;}
+.bj_remark .btn_bj{vertical-align:middle; line-height:17px; text-align:center; color:#be8a4c;float:left;  cursor:pointer; background-color: #fff;display:none;}
+.bj_remark .btn_rem{ vertical-align:middle; line-height:17px; text-align:center; color:#f96060;cursor:pointer;background-color: #fff;}
+
+/************************************图层编辑工具************************************/
+.wfsLayerEditToolBar {
+	width: 510px; font-family: "微软雅黑"; height: 30px; background: rgba(238, 238, 238, 1); border: 1px solid #ccc; position: absolute; top: 0px; left: 200px;cursor:default;
+}
+
+.wfsLayerEditToolBar>ul {
+	padding: 0px; margin: 2px 0; height: 20px; z-index: 1;
+}
+
+.wfsLayerEditToolBar>ul>li {
+	float: left; margin: 0px 5px; color: #555; margin-top: 1px; list-style: none; cursor: default;
+}
+
+.wfslayerlisttool {
+	float: left; margin: 0 5px 0 12px;
+}
+.wfslayercombox {
+	border: 1px solid #ddd; cursor: pointer; z-index: 1; float: left;
+}
+
+.closetoolbar {
+	line-height: 30px; float: right; cursor: pointer; position: absolute; top: 7px; right: 5px;
+}
+
+.wfstooldisable {
+	background: rgba(182, 182, 182, 0.6); position: absolute; cursor: default; display: block; width:inherit;height:inherit;
+}
+
+.wfsboxshadow {
+	width: 22px; height: 22px; box-shadow: 0px 1px 1px 0px #555; -webkit-box-shadow: 0px 1px 1px 0px #555; -moz-box-shadow: 0px 1px 1px 0px #555; -ms-box-shadow: 0px 1px 1px 0px #555; -o-box-shadow: 0px 1px 1px 0px #555; cursor: default;
+}
+
+.wfsboxshadow:hover {
+	background-color: fff;
+}
+
+.wfsactivetool {
+	background-color: fff;
+}
+.wfslayereye {
+	width: 22px; height: 22px; box-shadow: inset 0px 1px 5px #555; -webkit-box-shadow: inset 0px 1px 6px #555; -moz-box-shadow: inset 0px 1px 6px #555; -ms-box-shadow: inset 0px 1px 6px #555; -o-box-shadow: inset 0px 1px 6px #555; float: right; cursor: pointer;
+}
+
+.wfslayereyeshown {
+	width: 22px; height: 22px; background: url(../images/bmap/toolbox/layerEdit/eye.png) no-repeat;
+}
+
+.wfsstartedittool {
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/edt.png) no-repeat;
+}
+.wfssavetool{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/bc.png) no-repeat;
+}
+.wfsnewpointtool{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/add_d.png) no-repeat;
+}
+.wfsnewpolylinetool{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/add_x.png) no-repeat;
+}
+.wfsnewpolygontool{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/add_m.png) no-repeat;
+}
+.wfsnodeedittool{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/jdbj.png) no-repeat;
+}
+.wfstrasformtool{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/bh.png) no-repeat;
+}
+.wfsremovetool{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/remove.png) no-repeat;
+}
+.wfsclearseletedtool{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/seleDr1.png) no-repeat;
+}
+.dropdown ul {
+	display:none; border: 1px solid #ddd; background: #fff; position: absolute; left: 0px; margin: 0; top: 22px; padding: 0; width: 100%;
+}
+.dropdown ul li {
+	float: none; border-bottom: 1px solid #ddd; padding-top: 3px; padding-bottom: 22px; padding-left: 2px;cursor: pointer;
+}
+.dropdown ul li a {
+	display: block; width: 100%; height: 100%; background: #fff;
+}
+.card-drop a {
+	width: 100%; height: 23px; padding: 1px 2px; display: block; padding-right: 20px; text-decoration: none; color: #217dbb; background-color: #eee; border: 1px solid #ddd;cursor: pointer;
+}
+.card-drop>a.toggle:before,.card-drop>a.toggle:after {
+	content: ""; position: absolute;
+}
+.card-drop>a.toggle:before {
+	right: 5px; top: 45%; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 6px solid rgba(0, 0, 0, 0.8);
+}
+.wfsselectfeatureEnvelope{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/sele_k.png) no-repeat;
+}
+.wfsselectfeaturePolygon{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/sele_m.png) no-repeat;
+}
+.wfsselectfeatureCircle{
+	width: 22px; height: 22px; float: left; background: url(../images/bmap/toolbox/layerEdit/sele_r.png) no-repeat;
+}
+
+/************************************台风样式************************************/
+#typhoon_table_div>table>thead>tr>th,#typhoon_track_div>table>thead>tr>th,#ship_head_div>table>thead>tr>th{
+	 height:26px;
+	 margin: 0;
+	 text-align: center;
+	 vertical-align: middle;
+	 border: 1px solid gray;
+	 border-bottom: none;
+	 background-color: rgb(240, 240, 240);
+	 color: #323232;
+	 font-weight: normal;
+ }
+#typhoon_table_div>table>tbody>tr>td,#typhoon_data_div>table>tbody>tr>td,#typhoon_track_data>table>tbody>tr>td,#ship_body_div>table>tbody>tr>td{text-align: center;vertical-align: middle;border: 1px solid gray;height:25px;word-wrap:break-word;  }
+#typhoon_data_div>table>tbody>tr:hover,#typhoon_track_data>table>tbody>tr:hover,#ship_body_div>table>tbody>tr:hover{
+	background-color: rgb(240, 240, 240);
+}
+#typhoon_table_head,#typhoon_table_body,#typhoon_track_table_head,#typhoon_track_table_body,#ship_table_body,#ship_table_head {  border-collapse: collapse; border-spacing: 0; width: 100%;  table-layout: fixed;  margin-bottom: 0;}
+#typhoon_table_div>table>tbody>tr>td:first-child,#typhoon_data_div>table>tbody>tr>td:first-child,#typhoon_table_div>table>thead>tr>th:first-child {  width: 50px; }
+#typhoon_track_data>table>tbody>tr:first-child{border-top:none;}
+#typhoon_track_data>table>tbody>.TFselected{background-color: rgb(240, 240, 240);}
+
+/************************************AIS船讯样式************************************/
+#divShipInfo table,#divShipInfo table tr th,#divShipInfo table tr td { border:1px solid #ccc; }
+#divShipInfo table tr td .o{width:78px;}
+#divShipInfo table tr td .ro{width:135px;}
+#ais_route_port table tr th, #ais_route_port table tr td {width: 30%;}
+#ais_route_port table tr th {background-color: rgb(240, 240, 240);}
+.ais_op_btn {margin-right: 10px;width: 60px;background: #fff;font-size: 10px;height: 24px;}
+/*历史航次*/
+.ljgk{height:298px;overflow: auto;border-top:0;width:100%;}
+.ljgkleft{float:left;width:15px;padding-top:35px;}
+.ljgkleft input{width:12px;height:12px;padding:0;margin:0;}
+.ljgkright{width:356px;float:right;padding-top:7px;}
+.ljgkrt{height:34px;border-bottom:1px solid #eee;}
+.ljgkrtl{width:140px;float:left;text-align:center;}
+.ljgkrtl h3{line-height:16px;height:14px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;font-weight:700;color:#444;font-size:14px;}
+.ljgkrtl p{color:#888;height:16px;line-height:16px;}
+.ljgkrtc{width:72px;float:left;background:url(../images/bmap/trace/arrow-icon1.png) no-repeat 7px 8px;height:34px;}
+.ljgkrtc h4{line-height:12px;text-align:center;font-family: "微软雅黑";padding-right:6px;color:#666;font-size:12px;font-weight:normal;}
+.ljgkrtc h4.h4color{color:#016798;}
+.ljgkrb{height:22px;line-height:22px;overflow:hidden;font-family: "微软雅黑";padding:0 2px;color:#666;}
+.ljgkrb span{float:right;}
+
+.ljgkrtc p{margin-top:6px;line-height:12px;text-align:center;padding-right:6px;color:#666;}
+.ljgkborder{border-bottom:2px solid #c3d2e3;height:67px;font-size:12px;}

@@ -1,0 +1,315 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cesium</title>
+    <script type="text/javascript" src="lib/jquery/jquery-1.9.1.min.js"></script>
+    <!--bootstrap-->
+    <link rel='stylesheet' href="lib/dropDownListMenu/bootstrap.min.css" />
+    <link rel='stylesheet' href="lib/dropDownListMenu/global.css" />
+    <link rel='stylesheet' href="lib/dropDownListMenu/index.css" />
+    <!--对话框-->
+    <link rel='stylesheet' href="lib/jqueryDialog/jDialog/jDialog.css" />
+    <script src="lib/jqueryDialog/jDialog/jquery.drag.js" type='text/javascript'></script>
+    <script src="lib/jqueryDialog/jDialog/jquery.mask.js" type='text/javascript'></script>
+    <script src="lib/jqueryDialog/jDialog/jquery.dialog.js" type='text/javascript'></script>
+    <!--Ztree控件-->
+    <link href="lib/JQueryZTree/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="lib/JQueryZTree/js/jquery.ztree.all-3.5.min.js"></script>
+    <!--引入滚动条-->
+    <link href="lib/jquerymCustomScrollbar/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css">
+    </link>
+    <script type="text/javascript" src="lib/jquerymCustomScrollbar/jquery.mCustomScrollbar.js"></script>
+    <script type="text/javascript" src="lib/jquerymCustomScrollbar/jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="lib/seajs/sea.js"></script>
+    <script type="text/javascript" src="lib/seajs/seajs-text.js"></script>
+
+    <script type="text/javascript">
+        function getRootPath() {
+            //获取当前网址，如： http://localhost/GGFW/
+            var curWwwPath = window.document.location.href;
+            //获取主机地址之后的目录
+            var pathName = window.document.location.pathname;
+            var pos = curWwwPath.indexOf(pathName);
+            //获取主机地址
+            var localhostPaht = curWwwPath.substring(0, pos);
+            //获取带"/"的项目名
+            var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
+            if (projectName == "")
+                projectName = pathName;
+            // return (localhostPaht + projectName + "/");
+            return (localhostPaht + projectName);
+        }
+        var ctx = getRootPath();
+        var GLOBAL = {
+            domainRest: getRootPath() //rest 接口域名
+            , domainResource: getRootPath() //资源服务器域名
+        }
+    </script>
+
+    <!--cesium三维GIS部分引用资源-->
+    <link href="gis/cesium/cesiumviewer.css" rel="stylesheet" type="text/css" />
+    <link href="gis/cesium/cesium-api-1.66/Widgets/widgets.css" rel="stylesheet" type="text/css" />
+    <link href="gis/cesium/DrawHelper.css" rel="stylesheet" type="text/css" />
+
+    <!-- 地图js以及css -->
+    <link href="gis/map/res/css/mapcss.css" rel="stylesheet" type="text/css">
+    </link>
+    <link href="gis/map/css/map.css" rel="stylesheet" type="text/css">
+    </link>
+    <link href="gis/map/res/css/bxmap.css" rel="stylesheet" type="text/css">
+    </link>
+
+    <script src="gis/cesium/utils.js"></script>
+    <script src="gis/cesium/cesium-api-1.66/Cesium.js"></script>
+    <script src="gis/cesium/cesiumviewer.js"></script>
+    <script src="gis/cesium/DrawHelper.js"></script>
+    <script src="gis/cesium/viewerCesiumNavigationMixin.js"></script>
+    <script src="gis/cesium/mapconfig.js"></script>
+    <script src="gis/cesium/proj4.js"></script>
+    <!--量算工具引用-->
+    <link rel="stylesheet" type="text/css" href="lib/prompt/movePrompt.css">
+    <script src="lib/prompt/movePrompt.js"></script>
+    <script src="lib/turf/turf.min.js"></script>
+    <script src="lib/measure/measureSpaceArea.js"></script>
+    <script src="lib/measure/measureSpaceDistance.js"></script>
+    <script src="lib/measure/measureGroundDistance.js"></script>
+    <!-- 标绘相关 -->
+    <script src="lib/drawPlot/createPolyline.js"></script>
+    <script src="lib/drawPlot/createPolygon.js"></script>
+    <script src="lib/drawPlot/createBillboard.js"></script>
+    <script src="lib/drawPlot/createRectangle.js"></script>
+    <script src="lib/drawPlot/createCircle.js"></script>
+    <script src="lib/drawPlot/drawTool.js"></script>
+
+    <script type="text/javascript" src="gis/map/BaseLayerSwitcherToolBar.js"></script>
+    <!--三维漫游飞行-->
+    <script type="text/javascript" src="gis/map/flycesium.js"></script>
+    <script>
+        seajs.use(ctx + '/gis/map/index.js');
+    </script>
+
+</head>
+
+<body>
+    <div id="header">
+        <div id="header_left"><br>cesium</div>
+        <div id="navbar" class="navbar-collapse collapse float-right" style="margin-right: 50px;">
+            <ul class="nav navbar-nav">
+                <li class="dropdown" id="ThematicFunction_li">
+                    <a href="#" style="color: #fff;background-color: transparent;" class="dropdown-toggle"
+                        data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">专题功能<span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu" id="ThematicFunction_ul" style="margin-top: 15px;">
+                        <li id="cesiumSatelite"><a href="javascript:void(0);">卫星轨迹</a></li>
+                    </ul>
+                </li>
+                <!-- <li id="add-favore"><a href="#">收藏本站</a></li> -->
+                <!-- <li><a class="add_href_blank" href="http://zgeo.work/share/">资源分享</a></li> -->
+
+            </ul>
+        </div>
+    </div>
+    <div class="main-container" id="main-container">
+        <div class="main-content">
+            <div class="map_box">
+                <!--勾选地形-->
+                <div id="cesium_Terrain"
+                    style="padding:5px;z-index: 100;background: #0101014a;width: 85px;position: absolute;right: 100px;border-radius: 5px;">
+                    <input type="checkbox" style="width: 15px;height: 15px;vertical-align: middle;margin: auto;"
+                        checked />
+                    <label style="font-weight: normal;vertical-align: middle;margin: auto; color: #ffffff;">显示地形</label>
+                </div>
+                <!--三维模型gltf列表-->
+                <div id="showListsDIV"
+                    style="display:none;position: absolute;right:80px;top:40px;background: #0101018a;width: 300px;height: 650px;z-index:99;">
+                    <div id="showLists" style="height:99%;"></div>
+                </div>
+                <!--三维-->
+                <div id="d3d">
+                    <div class="map_content" id="cesiumMap"></div>
+                    <!--三维飞行漫游菜单界面-->
+                    <div class="fly3DPaths">
+                        <div class="fly3DPaths_title">操作菜单</div>
+                        <!--新增-->
+                        <!-- tab导航部分 -->
+                        <div class='fly3DPaths_tab'>
+                            <ul style='margin-left:0px;' class="fly3DPaths_tab_ul">
+                                <li id='overFlyClick' class="select"><span><span class='flss'></span><a
+                                            href='javascript:void(0)'>预设路线</a></span></li>
+                                <li id='drawFlyCilck'><span><span class='flss'></span><a
+                                            href='javascript:void(0);'>手动绘制</a></span></li>
+                            </ul>
+                        </div>
+                        <!-- tab内容部分 -->
+                        <!-- 预设路线 -->
+                        <div id='overFlyPage' style='height: 100%;'>
+                            <div style="padding: 5px;margin-top: 5px;">
+                                <div class='ydph-table-wrap'>
+                                    <div class='ydph-talbe-head'>
+                                        <table id='overFly_table' style='width:272px;'>
+                                            <thead>
+                                                <tr>
+                                                    <!--<th class='colspan1'><input type='checkbox' onchange=''/></th>-->
+                                                    <th class='colspan4'>名称</th>
+                                                    <th class='colspan2'>操作</th>
+                                                    <th class='colspan2'>修改</th>
+                                                    <th class='colspan2'>删除</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 手动绘制 -->
+                        <div id='drawFlyPage' style='height: 100%; display:none'>
+                            <div class="fly3DPaths_content">
+                                <input id="start_Fly3DPaths" class="fly3DPaths_model_id" type="button" value="开始飞行">
+                                <input id="pause_Fly3DPaths" class="fly3DPaths_model_id" type="button" value="暂停飞行">
+                                <input id="playForward_Fly3DPaths" class="fly3DPaths_model_id" type="button"
+                                    value="向前飞行">
+                                <input id="playReverse_Fly3DPaths" class="fly3DPaths_model_id" type="button"
+                                    value="向后飞行">
+                                <input id="draw_Fly3DPaths" class="fly3DPaths_model_id" type="button" value="设定路线">
+                                <input id="save_Fly3DPaths" class="fly3DPaths_model_id" type="button" value="保存路线">
+                                <input id="clear_Fly3DPaths" class="fly3DPaths_model_id" type="button" value="清空路线">
+                                <input id="stop_Fly3DPaths" class="fly3DPaths_model_id" type="button" value="退出飞行">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="map_toolbar_box">
+                        <div class="map_toolbar">
+                            <!--<div class="map_toolbar_head">工具栏</div>-->
+                            <ul class="map_toolbar_list">
+                                <li title="地图复位" id="cesiumMapFull">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar45"></span>
+                                </li>
+                                <li class="map_toolbar_list_drop" title="测量工具">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar1"></span>
+                                    <ul class="map_toolbar_list_more">
+                                        <li id="measureDistance">
+                                            空间距离<span
+                                                class="map_toolbar_list_more_icon map_toolbar_list_more_icon-toolbar11"></span>
+                                        </li>
+                                        <li id="measureGroundDistance">
+                                            贴地距离<span
+                                                class="map_toolbar_list_more_icon map_toolbar_list_more_icon-toolbar11"></span>
+                                        </li>
+                                        <li id="measureArea">
+                                            测量面积<span
+                                                class="map_toolbar_list_more_icon map_toolbar_list_more_icon-toolbar12"></span>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="map_toolbar_list_drop" title="标绘版本1" id="cesiumDrawToolbar">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar2"></span>
+                                    <ul class="map_toolbar_list_more">
+                                        <div id="toolbar" class="cesium_toolbar"></div>
+                                    </ul>
+                                </li>
+                                <li class="map_toolbar_list_drop" title="标绘版本2" id="cesiumDrawToolbar">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar2"></span>
+                                    <ul class="map_toolbar_list_more">
+                                        <li id="drawBillboard">
+                                            绘制点<span
+                                                class="map_toolbar_list_more_icon map_toolbar_list_more_icon-toolbarPoint"></span>
+                                        </li>
+                                        <li id="drawPolyline">
+                                            绘制线<span
+                                                class="map_toolbar_list_more_icon map_toolbar_list_more_icon-toolbarLine"></span>
+                                        </li>
+                                        <li id="drawPolygon">
+                                            绘制多边形<span
+                                                class="map_toolbar_list_more_icon map_toolbar_list_more_icon-toolbarPolygon"></span>
+                                        </li>
+                                        <li id="drawRectangle">
+                                            绘制矩形<span
+                                                class="map_toolbar_list_more_icon map_toolbar_list_more_icon-toolbarSquare"></span>
+                                        </li>
+                                        <li id="drawCircle">
+                                            绘制圆形<span
+                                                class="map_toolbar_list_more_icon map_toolbar_list_more_icon-toolbarCircle"></span>
+                                        </li>
+                                        <li id="clearAll">
+                                            清空<span
+                                                class="map_toolbar_list_more_icon map_toolbar_list_more_icon-toolbarClean"></span>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="map_toolbar_list_drop" title="图层管理器" id="cesium3DLayers">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar4"></span>
+                                    <ul class="map_toolbar_list_more">
+                                        <div class="syn3D">
+                                            <div id="LayerTree" style="width:150px;">
+                                                <ul id="ztreeThemeServerOfLayer" class="ztree"></ul>
+                                            </div>
+                                        </div>
+                                    </ul>
+                                </li>
+                                <li class="map_toolbar_list_drop" title="热点定位器" id="cesium3DLocation">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar5"></span>
+                                    <ul class="map_toolbar_list_more">
+                                        <div class="syn_location3D">
+                                            <div class="syn_con3D">
+                                                <div class="pub_syn3D">
+                                                    <div class="pub_syn_rt3D"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ul>
+                                </li>
+                                <li title="清空" id="cesiumClearData">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar7"></span>
+                                </li>
+                                <li title="卷帘工具" id="cesium3DSlider">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar26"></span>
+                                </li>
+                                <li title="3D模型" id="cesium3DModel">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar46"></span>
+                                </li>
+                                <li title="倾斜模型" id="cesium3DTiles">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar47"></span>
+                                </li>
+                                <li title="飞行" id="cesiumFly3DPaths">
+                                    <span class="map_toolbar_list_icon map_toolbar_list_icon-toolbar105"></span>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    (function () {
+        //计算地图高度
+        function getMapHeight() {
+            var height = $(window).height() - $('#header').outerHeight(true);
+            $('.map_box').css('height', height);
+        }
+        getMapHeight();
+        //专题功能
+        $("#ThematicFunction_li").bind("mouseover", function () {
+            $("#ThematicFunction_ul").show();
+        });
+        $("#ThematicFunction_li").bind("mouseout", function () {
+            $("#ThematicFunction_ul").hide();
+        });
+        //卫星轨迹
+        $("#cesiumSatelite").click(function () {
+            window.open('./gis/cesium/卫星轨迹/satellite.html', '_blank');
+        });
+
+    })();
+</script>
+
+</html>
