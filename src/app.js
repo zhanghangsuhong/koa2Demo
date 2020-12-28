@@ -17,27 +17,60 @@ const blogViewRouter = require('./routes/view/blog')
 const userAPIRouter = require('./routes/api/user')
 const utilsAPIRouter = require('./routes/api/utils')
 
+const { createProxyMiddleware } = require('http-proxy-middleware')
+const koaConnect = require('koa2-connect')
 
 const { SESSION_SECRET_KEY } = require('./conf/secertKeys')
+
+
+// 代理兼容封装
+const proxy = function (context, options) {
+    if (typeof options === 'string') {
+        options = {
+            target: options
+        }
+    }
+    return async function (ctx, next) {
+        await koaConnect(createProxyMiddleware(context, options))(ctx, next)
+    }
+}
+
+const proxyTable = {
+    '/Augurit/framework-ui/src/main/resources/static/agcloud/': {
+        target: 'http://127.0.0.1:8290',
+        changeOrigin: true,
+        pathRewrite: {
+            '^/Augurit/framework-ui/src/main/resources/static': '/agcloud'
+        },
+    },
+
+}
+
+
+Object.keys(proxyTable).map(context => {
+    const options = proxyTable[context]
+    // 使用代理
+    app.use(proxy(context, options))
+})
 
 // error handler
 onerror(app)
 
 // middlewares
 app.use(bodyparser({
-    enableTypes: [ 'json', 'form', 'text' ]
+    enableTypes: ['json', 'form', 'text']
 }))
 app.use(json())
 app.use(logger())
 app.use(koaStatic(__dirname + '/public'))
 // app.use(koaStatic(path.join(__dirname,'..','/uploadFiles')))
-app.use(koaStatic(path.resolve(__dirname,'../uploadFiles')))
+app.use(koaStatic(path.resolve(__dirname, '../uploadFiles')))
 
 app.use(views(__dirname + '/views', {
     extension: 'ejs'
 }))
 
-app.keys = [ SESSION_SECRET_KEY ]
+app.keys = [SESSION_SECRET_KEY]
 app.use(session({
     key: 'weibo.sid',
     prefix: 'weibo:sess:',
@@ -61,11 +94,11 @@ app.use(session({
 // })
 
 // routes
-app.use(utilsAPIRouter.routes(), utilsAPIRouter.allowedMethods())
-app.use(userAPIRouter.routes(), userAPIRouter.allowedMethods())
-app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
-app.use(blogViewRouter.routes(), blogViewRouter.allowedMethods())
-app.use(errorViewRouter.routes(), errorViewRouter.allowedMethods())
+// app.use(utilsAPIRouter.routes(), utilsAPIRouter.allowedMethods())
+// app.use(userAPIRouter.routes(), userAPIRouter.allowedMethods())
+// app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
+// app.use(blogViewRouter.routes(), blogViewRouter.allowedMethods())
+// app.use(errorViewRouter.routes(), errorViewRouter.allowedMethods())
 
 // error-handling
 app.on('error', (err, ctx) => {

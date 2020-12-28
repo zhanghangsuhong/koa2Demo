@@ -6,19 +6,19 @@
         "node": true
     },
     "rules": {
-        "array-bracket-spacing": ["error","always"],
-        "object-curly-spacing": ["error","always"],
-        "indent": ["error", 4],
+        // "array-bracket-spacing": ["error","always"],
+        // "object-curly-spacing": ["error","always"],
+        // "indent": ["error", 4],
         "quotes": [
-            "error",
-            "single",
-            {
-              "allowTemplateLiterals": true
-            }
+            // "error",
+            // "single",
+            // {
+            //   "allowTemplateLiterals": true
+            // }
         ],
         "semi": [
-            "error",
-            "never"
+            // "error",
+            // "never"
         ]
     }
 }
