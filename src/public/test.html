@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link rel="stylesheet" href="http://localhost:7777/cesiumMap1/gis/cesium/cesium-api-1.66/Widgets/widgets.css">
+	<style>
+		#box {
+			height: 650px;
+			width: 1000px;
+		}
+
+		#draw_box {
+			height: 250px;
+			width: 250px;
+			background-color: rgba(34, 176, 238, 0.2);
+			border-radius: 15px;
+			position: absolute;
+			z-index: 999;
+			left: 20px;
+			top: 20px;
+		}
+
+		#draw_box #startDraw,
+		#clearDraw,
+		#closeDraw {
+			height: 35px;
+			width: 100px;
+			background-color: rgba(255, 255, 255, 0.6);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			border-radius: 10px;
+		}
+
+		#draw_box #startDraw {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+		}
+
+		#draw_box #closeDraw {
+			width: 60px;
+			position: absolute;
+			top: 10px;
+			left: 150px;
+		}
+
+		#draw_box #clearDraw {
+			position: absolute;
+			top: 200px;
+			left: 10px;
+		}
+
+		#draw_box #start,
+		#close,
+		#clear {
+			height: 15px;
+			width: 15px;
+		}
+
+		#draw_box #content {
+			width: 200px;
+			height: 130px;
+			resize: none;
+			position: absolute;
+			top: 50px;
+			left: 10px;
+			border-color: rgba(23, 81, 156, 0.3);
+			outline: none;
+		}
+
+		#draw_box #saveResult {
+			border-radius: 10px;
+			height: 70px;
+			width: 200px;
+			background-color: rgba(204, 204, 204, .9);
+			position: absolute;
+			left: 25px;
+			top: 90px;
+			z-index: 99;
+			padding: 2px;
+			box-sizing: border-box;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+
+		#draw_box #saveResultTip {
+			font-weight: bolder;
+			color: orangered;
+		}
+
+		#draw_box #saveResultContent {
+			display: flex;
+			justify-content: center;
+		}
+
+		#draw_box #saveResultChoice {
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+		}
+
+		#draw_box #saveResultChoice span {
+			display: inline-block;
+			width: 30px;
+			line-height: 20px;
+			text-align: center;
+			border-radius: 10px;
+			background-color: orangered;
+			cursor: pointer;
+		}
+
+		#toolTip {
+			z-index: 600;
+			width: 150px;
+			height: 80px;
+			position: absolute;
+			background-color: rgba(255, 255, 255, 0.5);
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="box">
+		<div id="draw_box">
+			<div id="startDraw"><img id="start" src="铅笔.png" alt="">开始绘制</div>
+			<div id="closeDraw"><img id="close" src="删除.png" alt="">关闭</div>
+			<div id="saveResult">
+				<div id="saveResultTip">提示：</div>
+				<div id="saveResultContent"><span id="tip-1">是否保存测量结果</span></div>
+				<div id="saveResultChoice">
+					<span id="saveYes">是</span>
+					<span id="saveNo">否</span>
+				</div>
+			</div>
+			<textarea id="content"></textarea>
+			<div id="clearDraw"><img id="clear" src="橡皮.png" alt="">清除图形</div>
+		</div>
+		<div id="toolTip"></div>
+	</div>
+
+
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<script src="http://localhost:7777/cesiumMap1/gis/cesium/cesium-api-1.66/Cesium.js"></script>
+	<script>
+
+		viewer = new Cesium.Viewer('box', {
+			animation: false,
+			baseLayerPicker: false,
+			geocoder: true,
+			timeline: false,
+			sceneModePicker: true,
+			navigationHelpButton: false,
+			useDefaultRenderLoop: true,
+			showRenderLoopErrors: true,
+			fullscreenButton: true,
+			fullscreenElement: 'map3d',
+			infoBox: true,
+			mapProjection: new Cesium.WebMercatorProjection(),
+			imageryProvider: new Cesium.WebMapTileServiceImageryProvider({
+				url: "http://t0.tianditu.com/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={TileMatrix}&TileRow={TileRow}&TileCol={TileCol}&style=default&format=tiles&tk=ebf64362215c081f8317203220f133eb",
+				layer: "tdtBasicLayer",
+				style: "default",
+				format: "image/jpeg",
+				tileMatrixSetID: "GoogleMapsCompatible",
+				show: false,
+				maximumLevel: 18
+			})
+		});
+
+		var lineDistance = function (viewer) {
+			$('#draw_box').show();  // 显示面板
+			var $tooltip = $('#toolTip');    // toolTip是绘制提示
+			var $textarea = $('#content');   // 内容展示
+			var $saveResult = $('#saveResult');   //  提示框
+			$saveResult.hide(); // 隐藏关闭提示面板
+			var $Yes = $('#saveYes'), $No = $('#saveNo');    // 是否选项
+			var AllEntities = [];   // 存储所有绘制的对象
+			var isDraw = false; // 判断是否在画图
+			var polylinePath = [];  // 点集合
+			var disNums = [];   // 线路长度之和
+			var StartPoint = 0; // 存储起始点
+			var temLine = null; // 用来保存临时线
+			var text = 0;   // 用来保存里程
+			var contentString = '';   // 框内textarea内容
+			var handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+			// 删除鼠标左键双击功能
+			viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+
+			/**
+			 * 返回两个点的距离
+			 * @param startPoint 起始点
+			 * @param endPoint   终点
+			 * @returns {string}    单位：公里
+			 */
+			function getLineDis(startPoint, endPoint) {
+				var x2 = (endPoint.x - startPoint.x) * (endPoint.x - startPoint.x);
+				var y2 = (endPoint.y - startPoint.y) * (endPoint.y - startPoint.y);
+				var dis = Math.sqrt(x2 + y2) / 1000;
+				return dis.toFixed(2);
+			}
+
+			/**
+			 * 数组求和
+			 * @param arr 数组
+			 * @returns {number} 和
+			 */
+			function sum(arr) {
+				var sum = 0;
+				$.each(arr, function (index, value) {
+					sum += Number(value);
+				});
+				return sum;
+			}
+
+			/**
+			 * 创建点
+			 * @param point 点
+			 * @param text 根据text是起点还是中间点
+			 */
+			function createPoint(point, text) {
+				var labelText = text === undefined ? '起点' : text.toFixed(2).toString() + '公里';
+				var drawPoint = viewer.entities.add({
+					position: point, // 必须用世界坐标
+					point: { // 点
+						heightReference: Cesium.HeightReference.CLAMP_TO_GROUND, // 指定高度 该点固定在地形上
+						show: true,
+						color: Cesium.Color.SKYBLUE,
+						pixelSize: 3,    // 以像素为单位指定大小
+						outlineColor: Cesium.Color.YELLOW,  // 制定边框的颜色
+						outlineWidth: 3,   // 以像素为单位指定轮廓宽度
+						clampToGround: true // 贴地！！
+					},
+					label: { // 标签
+						text: labelText,
+						font: '24px monospace',
+						color: Cesium.Color.RED,
+						backgroundColor: Cesium.Color.CORAL, // 设置标签背景色
+						style: Cesium.LabelStyle.FILL_AND_OUTLINE,   // 描述如何绘制标签。填写并概述标签文本。
+						outlineWidth: 8,
+						heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+						verticalOrigin: Cesium.VerticalOrigin.TOP,  // 相对于对象的原点的垂直位置。原点在对象的顶部。
+						pixelOffset: new Cesium.Cartesian2(50, 0),  // 偏移量
+						clampToGround: true
+					}
+				});
+				AllEntities.push(drawPoint);
+			}
+
+			/**
+			 * 创建线
+			 * @param polylinePath 点集合
+			 * @param point 根据point判断是实线还是临时线
+			 */
+			function createLine(polylinePath, point) {
+				var linePosition = point === undefined ? polylinePath : [polylinePath, point];
+				var lineGlowPower = point === undefined ? .8 : .3;
+				var lineWidth = point === undefined ? 6 : 8;
+				var polyline = viewer.entities.add({
+					polyline: {
+						show: true,
+						positions: linePosition, // 获取或设置指定 Cartesian3 数组的属性定义线条的位置。
+						// 获取或设置指定用于绘制折线的材料的属性。
+						material: new Cesium.PolylineGlowMaterialProperty({
+							glowPower: lineGlowPower, //一个数字属性，指定发光强度，占总线宽的百分比。
+							color: Cesium.Color.BLUE.withAlpha(.9)
+						}),
+						width: lineWidth,
+						clampToGround: true
+					}
+				});
+				temLine = point === undefined ? undefined : polyline;
+				AllEntities.push(polyline);
+			}
+
+			/**
+			 * 清除所有绘制
+			 */
+			function clearDraw() {
+				$.each(AllEntities, function (index, value) {
+					viewer.entities.remove(value);
+				});
+				AllEntities = [];
+			}
+
+			/**
+			 * 开始按钮监听事件
+			 */
+			$('#startDraw').click(function () {
+				/**
+				 * 左键点击
+				 */
+				handler.setInputAction(function (movement) {
+					// 显示提示
+					$tooltip.show();
+					// 绘制开始
+					isDraw = true;
+					var position1, cartographic;
+					// 得到射线
+					var ray = viewer.scene.camera.getPickRay(movement.position);
+					if (ray) {
+						// 世界坐标
+						position1 = viewer.scene.globe.pick(ray, viewer.scene);
+					}
+					if (position1) {
+						// 弧度
+						cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(position1);
+					}
+					//世界坐标转地理坐标（弧度）
+					if (cartographic) {  // cartographic 如果是undefined就是在地球外
+						//地理坐标（弧度）转经纬度坐标
+						var lat = Cesium.Math.toDegrees(cartographic.latitude).toFixed(5);
+						var lon = Cesium.Math.toDegrees(cartographic.longitude).toFixed(5);
+						contentString = contentString + 'x:' + lat + 'y:' + lon + '\n';
+						$textarea.val(contentString);
+						//海拔
+						var height = viewer.scene.globe.getHeight(cartographic);
+						// 世界坐标
+						var point = Cesium.Cartesian3.fromDegrees(cartographic.longitude / Math.PI * 180, cartographic.latitude / Math.PI * 180, height);
+						polylinePath.push(point); //加点
+						if (isDraw && polylinePath.length === 1) {
+							StartPoint = point;
+							createPoint(point);    // 创建起始点
+						} else if (isDraw && polylinePath.length > 1) {
+							text = sum(disNums) + Number(getLineDis(polylinePath[0], polylinePath[1]));
+							disNums.push(getLineDis(polylinePath[0], polylinePath[1]));
+							// 创建中间点
+							createPoint(point, text);
+							// 创建线
+							createLine(polylinePath);
+							var lastpoint = polylinePath[polylinePath.length - 1];
+							polylinePath = [lastpoint];
+						}
+					}
+				}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+				/**
+				 * 鼠标移动
+				 */
+				handler.setInputAction(function (movement) {
+					var position1;
+					var cartographic;
+					var ray = viewer.scene.camera.getPickRay(movement.endPosition);
+					if (ray) {
+						position1 = viewer.scene.globe.pick(ray, viewer.scene);
+					}
+					if (position1) {
+						cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(position1);
+					}
+					// 判断参数是否合法，不合法说明在地球之外
+					if (cartographic) {
+
+						//海拔
+						var height = viewer.scene.globe.getHeight(cartographic);
+						//地理坐标（弧度）转经纬度坐标
+						var point = Cesium.Cartesian3.fromDegrees(cartographic.longitude / Math.PI * 180, cartographic.latitude / Math.PI * 180, height);
+						if (isDraw) {
+							$tooltip.css('left', movement.endPosition.x + 30 + "px");
+							$tooltip.css('top', movement.endPosition.y - 25 + "px");
+							$tooltip.show();
+							if (polylinePath.length < 1) {
+								return;
+							}
+							if (temLine != null) //清除临时线
+							{
+								viewer.entities.remove(temLine);
+							}
+							if (polylinePath.length === 1 && point.x != null) {
+								// 创建临时线
+								createLine(polylinePath[0], point);
+								var distance = sum(disNums) + Number(getLineDis(polylinePath[0], point));//自己实现
+								//tooltip.innerHTML = '<p>长度：' + distance.toFixed(2) + '公里</p><p>双击确定终点</p>';
+								$tooltip.html("<p>长度：" + distance.toFixed(2) + "公里</p><p>右键确定终点</p>");
+							}
+						}
+					}
+				}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+				/**
+				 * 右键单击
+				 */
+				handler.setInputAction(function () {
+					contentString = contentString + '总距离：' + sum(disNums) + '公里\n';
+					$textarea.val(contentString);
+					text = 0;
+					polylinePath = [];
+					disNums = [];
+					StartPoint = 0;
+					viewer.trackedEntity = undefined;
+					isDraw = false;
+					$tooltip.hide();
+					$tooltip.html('');
+					if (temLine != null) //清除临时线
+					{
+						viewer.entities.remove(temLine);
+					}
+				}, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+			});
+
+			/**
+			 * 关闭按钮监听事件
+			 */
+			$('#closeDraw').one('click', function () {
+				isDraw = false;
+				handler.destroy();
+				if (AllEntities.length !== 0) {
+					$saveResult.slideDown();
+					$Yes.one(function () {
+						$textarea.val('');
+						clearDraw();
+						$('#draw_box').slideUp(1000);
+					});
+					$No.click(function () {
+						$textarea.val('');
+						clearDraw();
+						$('#draw_box').slideUp(1000);
+					});
+				} else {
+					$('#draw_box').slideUp(1000);
+				}
+			});
+
+			/**
+			 * 清除按钮监听事件
+			 */
+			$('#clearDraw').click(function () {
+				clearDraw();
+				$textarea.val('');
+				contentString = '';
+			});
+		};
+		lineDistance(viewer);
+
+	</script>
+</body>
+
+</html>

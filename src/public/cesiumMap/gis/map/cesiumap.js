@@ -265,11 +265,14 @@ define(function (require, exports, module) {
                             "<span>地址:</span><span>" + data.address + "</span></br>" +
                             "</div>";
                         var cartographic = Cesium.Cartographic.fromCartesian(entity._position._value);//世界坐标转地理坐标（弧度）
+                        console.log("entity._position._value：", JSON.stringify(entity._position._value))
                         //var point=[ cartographic.longitude / Math.PI * 180, cartographic.latitude / Math.PI * 180];//地理坐标（弧度）转经纬度坐标
 
                         var point = [Cesium.Math.toDegrees(cartographic.longitude), Cesium.Math.toDegrees(cartographic.latitude)];//地理坐标（弧度）转经纬度坐标
 
                         var popupCartesian = Cesium.Cartesian3.fromDegrees(point[0], point[1], 0);
+                        console.log("popupCartesian：", JSON.stringify(popupCartesian))
+                        //笛卡尔坐标系转平面坐标系（平面坐标系）
                         var position = Cesium.SceneTransforms.wgs84ToWindowCoordinates(cesium.cesiumViewer.scene, popupCartesian);
                         var obj = { position: position, content: content };
                         cesium.infoWindow(obj);

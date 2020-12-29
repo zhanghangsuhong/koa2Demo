@@ -36,13 +36,21 @@ const proxy = function (context, options) {
 }
 
 const proxyTable = {
-    '/Augurit/framework-ui/src/main/resources/static/agcloud/': {
-        target: 'http://127.0.0.1:8290',
+    '/cesium/3DModel': {
+        target: 'http://localhost:8080',
         changeOrigin: true,
-        pathRewrite: {
-            '^/Augurit/framework-ui/src/main/resources/static': '/agcloud'
-        },
+        // pathRewrite: {
+        //     '^/Augurit/framework-ui/src/main/resources/static': '/agcloud'
+        // },
     },
+    '/geowebcache': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        // pathRewrite: {
+        //     '^/Augurit/framework-ui/src/main/resources/static': '/agcloud'
+        // },
+    },
+
 
 }
 
