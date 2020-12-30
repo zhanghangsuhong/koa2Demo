@@ -19,10 +19,10 @@ MeasureSpaceDistance.prototype = {
 	//开始测量
 	start: function () {
 		var that = this;
-		this.handler.setInputAction(function (evt) { //单机开始绘制
+		this.handler.setInputAction(function (evt) { //单击开始绘制
 			var cartesian = that.getCatesian3FromPX(evt.position, that.viewer, [that.polyline, that.floatLable]);
 			if (!cartesian) return;
-			//that.tsLabel.label.text = "单机新增点\n双击结束";
+			//that.tsLabel.label.text = "单击新增点\n双击结束";
 			var label;
 			if (that.positions.length == 0) {
 				label = that.createLabel(cartesian, "起点");
