@@ -23,7 +23,7 @@ const koaConnect = require('koa2-connect')
 const { SESSION_SECRET_KEY } = require('./conf/secertKeys')
 
 
-// 代理兼容封装
+
 const proxy = function (context, options) {
     if (typeof options === 'string') {
         options = {
@@ -45,6 +45,13 @@ const proxyTable = {
     },
     '/geowebcache': {
         target: 'http://localhost:8080',
+        changeOrigin: true,
+        // pathRewrite: {
+        //     '^/Augurit/framework-ui/src/main/resources/static': '/agcloud'
+        // },
+    },
+    '/img_w/wmts': {
+        target: 'http://t0.tianditu.com',
         changeOrigin: true,
         // pathRewrite: {
         //     '^/Augurit/framework-ui/src/main/resources/static': '/agcloud'
